@@ -1,9 +1,11 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
-import OTPTextView from "react-native-otp-textinput";
-const MenuPage = () => {
+import Firebase, { FirebaseContext } from '../firebase';
+const MenuPage = ({navigation}) => {
   return (
+    <FirebaseContext.Consumer>
+    { firebase => (
     <View style={styles.container}>
       <Text style={styles.header} theme={{ fonts: "medium" }}>
         MOTORCYCLE
@@ -16,7 +18,7 @@ const MenuPage = () => {
           color="#0070c6"
           mode="contained"
           style={styles.button}
-          onPress={() => console.log("Pressed")}
+          onPress={() => navigation.navigate("TrackPage")}
         >
           Track Location
         </Button>
@@ -24,7 +26,7 @@ const MenuPage = () => {
           color="#0070c6"
           mode="contained"
           style={styles.button}
-          onPress={() => console.log("Pressed")}
+          onPress={() => navigation.navigate("HistoryPage")}
         >
           Location History
         </Button>
@@ -35,12 +37,14 @@ const MenuPage = () => {
           dark
           mode="contained"
           style={styles.button}
-          onPress={() => console.log("Pressed")}
+          onPress={() => firebase.doSignOut()}
         >
           Log Out
         </Button>
       </View>
     </View>
+    )}
+  </FirebaseContext.Consumer>
   );
 };
 
