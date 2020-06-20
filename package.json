@@ -18,6 +18,7 @@
     "expo-location": "~8.1.0",
     "expo-permissions": "~8.1.0",
     "firebase": "^7.15.0",
+    "geocoder": "^0.2.3",
     "haversine": "^1.1.1",
     "lodash.pick": "^4.4.0",
     "react": "16.9.0",

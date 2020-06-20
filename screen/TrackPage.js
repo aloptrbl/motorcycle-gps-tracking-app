@@ -7,13 +7,19 @@ import pick from "lodash.pick";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 const { width, height } = Dimensions.get("window");
-const firebase = new Firebase();
+import geocoder from 'geocoder';
 import haversine from "haversine";
+
+
 const ASPECT_RATIO = width / height;
+
+
 const TrackPage = ({firebase}) => {
   const latlng = null;
   const longitude_delta = 0.0922 * ASPECT_RATIO;
   const [location, setLocation] = useState(null);
+  const [trackLocation, settrackLocation] = useState(false);
+  const [trackStatus, settrackStatus] = useState("Start");
   const [errorMsg, setErrorMsg] = useState(null);
   const [currentLocation, setcurrentLocation] = useState({
     latitude: 3.019481,
@@ -26,6 +32,38 @@ const TrackPage = ({firebase}) => {
   const [prevLatLng, setprevLatLng] = useState({});
   const [deviceLocation, setdeviceLocation] = useState(null);
 
+const _trackLocation = async () => {
+settrackLocation(!trackLocation);
+if(trackLocation)
+{
+  alert("Your tracking in Off.");
+  settrackStatus("Stop");
+  geocoder.reverseGeocode( 4.2105, 101.9758, function ( err, data ) {
+  firebase.writeHistoryData(data, 2, 1);
+  });
+  return () => {
+    unsubscribe()
+  }
+}
+else
+{
+  alert("Your tracking is On.");
+  settrackStatus("Start");
+
+  var unsubscribe = await firebase.trackMotors().on('value', (snapshot) => {
+    var { latitude, longitude } = snapshot.val();
+    var newLatLng = {
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude)
+    };
+  const positionLatLngs = pick(newLatLng, ["latitude", "longitude"]);
+setrouteCoordinates(routeCoordinates.concat(positionLatLngs));
+setdistanceTravelled(distanceTravelled + calcDistance(newLatLng));
+setprevLatLng(newLatLng);
+});
+}
+
+}
 
   useEffect(() => {
     (async () => {
@@ -40,10 +78,6 @@ const TrackPage = ({firebase}) => {
           latitude: parseFloat(latitude),
           longitude: parseFloat(longitude)
         };
-        const positionLatLngs = pick(newLatLng, ["latitude", "longitude"]);
-        setrouteCoordinates(routeCoordinates.concat(positionLatLngs));
-        setdistanceTravelled(distanceTravelled + calcDistance(newLatLng));
-        setprevLatLng(newLatLng);
         setdeviceLocation(newLatLng);
         });
 
@@ -76,7 +110,7 @@ const TrackPage = ({firebase}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Track Location</Text>
-        <Text>{parseFloat(distanceTravelled).toFixed(2)} km</Text>
+        <Text style={{textAlign: 'center'}}>{parseFloat(distanceTravelled).toFixed(2)} km</Text>
       </View>
       <MapView
         initialRegion={currentLocation}
@@ -99,9 +133,10 @@ const TrackPage = ({firebase}) => {
           mode="contained"
           contentStyle={styles.buttons}
           style={styles.button}
+          onPress={()=> _trackLocation()}
         >
           <Text style={styles.buttonTitle}>
-            STOP TRACKING {JSON.stringify(deviceLocation)}
+            {trackLocation ? "Stop" : "Start"}
           </Text>
         </Button>
       </View>

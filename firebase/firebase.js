@@ -58,6 +58,14 @@ return this.result;
   users = () => this.db.ref('users');
   drivers = () => this.db.ref('drivers');
 
+  writeHistoryData = (location, coordinate, timestamp) => 
+    this.db.ref('location/history').push().set({
+      address: location,
+      coordinate: coordinate,
+      timestamp : timestamp
+    });
+  
+
   writeUserData = (userId, name, platenumber, to_location, from_location) => 
     this.db.ref('drivers').push().set({
       device_id: userId,
