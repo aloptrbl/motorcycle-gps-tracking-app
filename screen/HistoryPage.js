@@ -1,17 +1,38 @@
 import React from "react";
-import { StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions, FlatList } from "react-native";
+import Firebase, { FirebaseContext, withFirebase } from "../firebase";
 import { Text, TextInput, Button } from "react-native-paper";
 import MapView from "react-native-maps";
-const HistoryPage = () => {
+import { useEffect, useState } from "react";
+import moment from 'moment';
+const HistoryPage = ({firebase}) => {
+  const [locationHistoryList, setLocationHistoryList] = useState(null);
+  useEffect(() => {
+    firebase.history().on('value', snapshot => {
+    const historyObj = snapshot.val();
+    const historyList = Object.keys(historyObj).map(key => ({
+    ...historyObj[key],
+    uid: key, 
+    }));
+    setLocationHistoryList(historyList);
+    })
+    },[firebase]);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Location History</Text>
       </View>
-      <View style={styles.locationItem}>
-      <Text style={styles.locationItemDate}>10 Dis 2019 10:03AM</Text>
-      <Text style={styles.locationAddress}>JALAN INTELEK, 76100 DURIAN TUNGGAL MELAKA</Text>    
+      <FlatList
+      data={locationHistoryList}
+      renderItem={(rowData) => 
+        <View style={styles.locationItem}>
+      <Text style={styles.locationItemDate}>{moment(rowData.item.timestamp).format("MMMM Do YY, h:mm a")}</Text>
+      <Text style={styles.locationAddress}>{rowData.item.address.name}, {rowData.item.address.street}, {rowData.item.address.city}, {rowData.item.address.country}</Text>    
       </View>
+      }
+      keyExtractor={item => item.uid}
+      />
+      
     </View>
   );
 };
@@ -64,4 +85,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HistoryPage;
+export default withFirebase(HistoryPage);

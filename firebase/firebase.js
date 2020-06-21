@@ -54,9 +54,8 @@ return this.result;
 
       // *** User API ***
   user = uid => this.db.ref(`users/${uid}`);
-  driver = driver => this.db.ref(`drivers/${driver}`);
   users = () => this.db.ref('users');
-  drivers = () => this.db.ref('drivers');
+  history = () => this.db.ref('location/history');
 
   writeHistoryData = (location, coordinate, timestamp) => 
     this.db.ref('location/history').push().set({
