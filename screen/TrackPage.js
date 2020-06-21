@@ -69,8 +69,14 @@ const TrackPage = ({ firebase }) => {
       }
       
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location); 
-      setcurrentLocation(location);
+      var pos = {
+        latitude: parseFloat(location.coords.latitude),
+        longitude: parseFloat(location.coords.longitude),
+        // latitudeDelta: 0.0922,
+        // longitudeDelta: 0.0922 * longitude_delta,
+      };
+      setLocation(pos); 
+      setcurrentLocation(pos);
 
       //device location
       const unsubscribe = await firebase
@@ -100,12 +106,6 @@ const TrackPage = ({ firebase }) => {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
-    var pos = {
-      latitude: parseFloat(location.coords.latitude),
-      longitude: parseFloat(location.coords.longitude),
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0922 * longitude_delta,
-    };
   }
 
   return (
@@ -115,7 +115,7 @@ const TrackPage = ({ firebase }) => {
       </View>
       <MapView
       region={location}
-        initialRegion={pos ? pos : currentLocation}
+        initialRegion={currentLocation}
         overlays={[
           {
             coordinates: routeCoordinates,
@@ -137,8 +137,8 @@ const TrackPage = ({ firebase }) => {
             />
           </Marker.Animated>
         ) : null}
-        { pos ? (
-          <Marker.Animated coordinate={pos}>
+        { currentLocation ? (
+          <Marker.Animated coordinate={currentLocation}>
           <Image
               style={{ width: 50, height: 40 }}
               resizeMode={"contain"}
