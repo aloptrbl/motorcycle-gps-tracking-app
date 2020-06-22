@@ -32,9 +32,10 @@ const TrackPage = ({ firebase }) => {
     settrackLocation(!trackLocation);
     if (trackLocation) {
       alert("Your tracking in Off.");
+      const {latitude, longitude} = deviceLocation;
       const location = await Location.reverseGeocodeAsync({
-        latitude: 2.2786538,
-        longitude: 102.28914259999999,
+        latitude: latitude,
+        longitude: longitude,
       });
       await firebase.writeHistoryData(
         location[0],
@@ -110,9 +111,6 @@ const TrackPage = ({ firebase }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Track Location</Text>
-      </View>
       <MapView
       region={location}
         initialRegion={currentLocation}

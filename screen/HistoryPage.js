@@ -19,9 +19,6 @@ const HistoryPage = ({firebase}) => {
     },[firebase]);
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Location History</Text>
-      </View>
       <FlatList
       data={locationHistoryList}
       renderItem={(rowData) => 
