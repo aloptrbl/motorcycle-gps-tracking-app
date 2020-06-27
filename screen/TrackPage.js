@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Dimensions, Image } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
 import MapView, { Marker, AnimatedRegion } from "react-native-maps";
@@ -10,6 +10,12 @@ const { width, height } = Dimensions.get("window");
 import haversine from "haversine";
 
 const ASPECT_RATIO = width / height;
+const LATITUDE = 37.78825;
+const LONGITUDE = -122.4324;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+
 console.disableYellowBox = true;
 const TrackPage = ({ firebase }) => {
   const latlng = null;
@@ -65,6 +71,7 @@ const TrackPage = ({ firebase }) => {
         setdistanceTravelled(distanceTravelled + calcDistance(newLatLng));
         setprevLatLng(newLatLng);
         setcurrentLocation(newLatLng);
+        map.AnimatedRegion
       });
     }
   };
