@@ -2,11 +2,7 @@ import React, {useContext, useState, useEffect} from 'react';
 import { StyleSheet, Text, View, Alert } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import Routes from './Routes';
-import { NavigationContainer } from '@react-navigation/native';
-import AuthStack from './AuthStack';
-import HomeStack from './HomeStack';
 import Firebase, { FirebaseContext } from './firebase';
-import { AuthContext } from './AuthProvider';
 export default function App() {
   const { user, setUser } = useState(false);
   const [loading, setLoading] = useState(true);

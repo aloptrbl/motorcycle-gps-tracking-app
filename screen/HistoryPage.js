@@ -5,16 +5,25 @@ import { Text, TextInput, Button } from "react-native-paper";
 import MapView from "react-native-maps";
 import { useEffect, useState } from "react";
 import moment from 'moment';
+
+//History Page  Screen
 const HistoryPage = ({firebase}) => {
+  
+  //set location array
   const [locationHistoryList, setLocationHistoryList] = useState(null);
+
+  //Execute function when history page load
   useEffect(() => {
+    //firebase api
     firebase.history().on('value', snapshot => {
     const historyObj = snapshot.val();
+    //make list of location history and set in array list
     const historyList = Object.keys(historyObj).map(key => ({
     ...historyObj[key],
     uid: key, 
     }));
-    setLocationHistoryList(historyList);
+    //Set array in locati
+    setLocationHistoryList(historyList.reverse());
     })
     },[firebase]);
   return (

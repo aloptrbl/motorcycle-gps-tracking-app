@@ -42,6 +42,7 @@ const MainPage = ({navigation}) => {
     </View>
        <Button color="black" mode="contained" disabled={!phoneNumber} onPress={async () => {
           try {
+            //recaptcha verification
             const phoneProvider = new firebases.auth.PhoneAuthProvider();
             const verificationId = await phoneProvider.verifyPhoneNumber(
               phoneNumber,
@@ -49,6 +50,7 @@ const MainPage = ({navigation}) => {
             );
             setVerificationId(verificationId);
             alert( "Verification code has been sent to your phone.");
+            //Send credential recaptcha if successful 
             navigation.navigate("OTPPage", {verificationId: verificationId});
           } catch (err) {
             alert(err);

@@ -20,43 +20,38 @@ class Firebase {
     this.result = null;
   }
 
-  trackMotors = () => 
-    this.db.ref('location/data');
-  // *** Auth API ***
-  trackMotor = () =>
-  { this.db.ref('location/data').on('value', (snapshot) => {
-  this.result = snapshot.val();
-  }) 
-return this.result;
-};
+  // doCreateUserWithEmailAndPassword = (email, password) =>
+  // this.auth.createUserWithEmailAndPassword(email, password);
 
-  doCreateUserWithEmailAndPassword = (email, password) =>
-  this.auth.createUserWithEmailAndPassword(email, password);
+  // doSignInWithEmailAndPassword = (email, password) =>
+  // this.auth.signInWithEmailAndPassword(email, password);
 
-  doSignInWithEmailAndPassword = (email, password) =>
-  this.auth.signInWithEmailAndPassword(email, password);
+  // doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
+  // doPasswordUpdate = password =>
+  //   this.auth.currentUser.updatePassword(password);
 
+    //login using number 
   doSignInWithPhoneNumber = (phoneNumber, appVerifier) =>
   this.auth.signInWithPhoneNumber(phoneNumber, appVerifier);
   
+
+  //listen authentication change in firebase
   onAuthStateChanged = (onauthstatechanged) => 
   this.auth.onAuthStateChanged(onauthstatechanged);
 
+  //listener phone authentication change in firebase
   doPhoneAuthProvider = () => firebase.auth.PhoneAuthProvider();
 
+  //sign out
   doSignOut = () => this.auth.signOut();
 
-  alerttest = () => alert("test");
-
-  doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
-  doPasswordUpdate = password =>
-    this.auth.currentUser.updatePassword(password);
 
       // *** User API ***
   user = uid => this.db.ref(`users/${uid}`);
   users = () => this.db.ref('users');
   history = () => this.db.ref('location/history');
 
+  //create history location
   writeHistoryData = (location, coordinate, timestamp) => 
     this.db.ref('location/history').push().set({
       address: location,
@@ -64,24 +59,19 @@ return this.result;
       timestamp : timestamp
     });
   
+    //refer raspberry pi location in firebase
+    trackMotors = () => 
+    this.db.ref('location/data');
 
-  writeUserData = (userId, name, platenumber, to_location, from_location) => 
-    this.db.ref('drivers').push().set({
-      device_id: userId,
-      driver_name: name,
-      plate_number : platenumber,
-      to_location: to_location,
-      from_location: from_location
-    });
+  // get raspberry pi location in firebase
+  trackMotor = () =>
+  { this.db.ref('location/data').on('value', (snapshot) => {
+  this.result = snapshot.val();
+  }) 
+return this.result;
+};
 
-    updateUserData = (uid, deviceid, name, platenumber, to_location, from_location) => 
-    this.db.ref('drivers/' + uid).set({
-      device_id: deviceid,
-      driver_name: name,
-      plate_number : platenumber,
-      to_location: to_location,
-      from_location: from_location
-    });
+  
   
 }
 export default Firebase;

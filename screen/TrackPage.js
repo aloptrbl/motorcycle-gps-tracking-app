@@ -14,7 +14,8 @@ console.disableYellowBox = true;
 const TrackPage = ({ firebase }) => {
   const latlng = null;
   const longitude_delta = 0.0922 * ASPECT_RATIO;
-  const [location, setLocation] = useState(null);
+  const map = useRef(null);
+  const [location, setLocation] = useState(null); //phone
   const [trackLocation, settrackLocation] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const [currentLocation, setcurrentLocation] = useState({
@@ -26,13 +27,16 @@ const TrackPage = ({ firebase }) => {
   const [routeCoordinates, setrouteCoordinates] = useState([]);
   const [distanceTravelled, setdistanceTravelled] = useState(0);
   const [prevLatLng, setprevLatLng] = useState({});
-  const [deviceLocation, setdeviceLocation] = useState(null);
+  const [deviceLocation, setdeviceLocation] = useState(null); //raspberry pi device
 
+
+  //start stop button function
   const _trackLocation = async () => {
     settrackLocation(!trackLocation);
     if (trackLocation) {
       alert("Your tracking in Off.");
       const {latitude, longitude} = deviceLocation;
+      //convert coordinate to places eg: Kuala Lumpur
       const location = await Location.reverseGeocodeAsync({
         latitude: latitude,
         longitude: longitude,
@@ -47,21 +51,25 @@ const TrackPage = ({ firebase }) => {
       };
     } else {
       alert("Your tracking is On.");
-
+//device track location
       var unsubscribe = await firebase.trackMotors().on("value", (snapshot) => {
         var { latitude, longitude } = snapshot.val();
+        
         var newLatLng = {
           latitude: parseFloat(latitude),
           longitude: parseFloat(longitude),
         };
+        //polyline
         const positionLatLngs = pick(newLatLng, ["latitude", "longitude"]);
         setrouteCoordinates(routeCoordinates.concat(positionLatLngs));
         setdistanceTravelled(distanceTravelled + calcDistance(newLatLng));
         setprevLatLng(newLatLng);
+        setcurrentLocation(newLatLng);
       });
     }
   };
 
+  //Listen to change of firebase
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestPermissionsAsync();
@@ -69,6 +77,7 @@ const TrackPage = ({ firebase }) => {
         setErrorMsg("Permission to access location was denied");
       }
       
+      //phone gps
       let location = await Location.getCurrentPositionAsync({});
       var pos = {
         latitude: parseFloat(location.coords.latitude),
@@ -76,8 +85,14 @@ const TrackPage = ({ firebase }) => {
         // latitudeDelta: 0.0922,
         // longitudeDelta: 0.0922 * longitude_delta,
       };
+      //set  current
       setLocation(pos); 
-      setcurrentLocation(pos);
+
+
+      if(deviceLocation == null)
+      {
+        setcurrentLocation(pos);
+      }
 
       //device location
       const unsubscribe = await firebase
@@ -112,7 +127,8 @@ const TrackPage = ({ firebase }) => {
   return (
     <View style={styles.container}>
       <MapView
-      region={location}
+      ref = {map}
+      region={currentLocation}
         initialRegion={currentLocation}
         overlays={[
           {
@@ -124,6 +140,7 @@ const TrackPage = ({ firebase }) => {
         style={styles.mapStyle}
       > 
       {deviceLocation ? (
+        //device marker icon
           <Marker.Animated coordinate={deviceLocation}>
             <Image
               style={{ width: 50, height: 40 }}
@@ -135,7 +152,9 @@ const TrackPage = ({ firebase }) => {
             />
           </Marker.Animated>
         ) : null}
+        
         { currentLocation ? (
+          //phone marker / icon
           <Marker.Animated coordinate={currentLocation}>
           <Image
               style={{ width: 50, height: 40 }}

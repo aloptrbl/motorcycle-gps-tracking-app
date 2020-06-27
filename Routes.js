@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthStack from './AuthStack';
 import HomeStack from './HomeStack';
-import { AuthContext } from './AuthProvider';
 import { withFirebase } from './firebase';
 
 class Routes extends Component {

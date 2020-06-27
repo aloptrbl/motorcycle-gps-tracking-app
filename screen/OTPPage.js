@@ -3,22 +3,28 @@ import { StyleSheet, View } from 'react-native';
 import {Text, TextInput, Button} from 'react-native-paper';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 import * as firebases from 'firebase';
-import Firebase, { FirebaseContext } from '../firebase';
 const OTPPage = (route, navigation) => {
 const [otpNumber, setotpNumber] = useState("");
 const [disabled, setDisabled] = useState(true);
+
+
+//login function
 const next = async () => {
   try {
+    //Verification Human
     const credential = firebases.auth.PhoneAuthProvider.credential(
+      //data from previous page / OTP page
       route.route.params.verificationId,
       otpNumber
     );
+    //Login Using OTP SMS
     await firebases.auth().signInWithCredential(credential);
     alert("Phone authentication successful");
   } catch (err) {
     alert(err);
   }
 };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header} theme={{fonts: 'medium'}}>MOTORCYCLE
@@ -44,6 +50,7 @@ const next = async () => {
   );
 }
 
+//CSS
 const styles = StyleSheet.create({
   container: {
     flex: 1,
