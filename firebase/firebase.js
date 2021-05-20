@@ -3,12 +3,12 @@ import 'firebase/auth';
 import firebase from 'firebase';
 import 'firebase/database';
 const config = {
-  apiKey: "AIzaSyCSLbCuHNAMKmUyqRreWESwjspdc80QHEI",
-  authDomain: "gps-data-3575a.firebaseapp.com",
-  databaseURL: "https://gps-data-3575a.firebaseio.com",
-  projectId: "gps-data-3575a",
-  storageBucket: "gps-data-3575a.appspot.com",
-  messagingSenderId: "541694277968",
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
 };
 class Firebase {
   constructor() {
